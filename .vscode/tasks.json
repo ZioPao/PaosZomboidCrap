@@ -14,6 +14,16 @@
             "command": "python ${config:zomboid_user_folder}/PaosCrap/make_workshop_pack.py picch ${workspaceFolderBasename}",
         },
         {
+            "label": "Test Script",
+            "type": "shell",
+            "options": {
+                "statusbar": {
+                    "label": "$(combine) Test"
+                }
+            },
+            "command": "python ${config:zomboid_user_folder}/PaosCrap/start_and_auto_join.py",
+        },
+        {
             "label": "Run Zomboid Debug No Steam",
             "type": "shell",
             "presentation": {
