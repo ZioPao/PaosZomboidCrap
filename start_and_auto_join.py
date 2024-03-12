@@ -20,7 +20,7 @@ import pydirectinput
 process_list = []
 
 
-open_programs = False
+open_programs = True
 
 # Scaling 150%
 resX = 3840 #/ 1.5           
@@ -76,16 +76,16 @@ if __name__ == "__main__":
         # #win.close()
 
 
-    if open_programs:
-        time.sleep(18)
-    count = 0
+    # if open_programs:
+    #     time.sleep(18)
+    # count = 0
 
-    for win in windows:
-        #win.setFocus()
-        join = click_map[count]['join']
-        pydirectinput.click(x=join['x'], y=join['y'], clicks=5, interval=0.2)
+    # for win in windows:
+    #     #win.setFocus()
+    #     join = click_map[count]['join']
+    #     pydirectinput.click(x=join['x'], y=join['y'], clicks=5, interval=0.2)
 
-        count += 1
+    #     count += 1
 
 
 
