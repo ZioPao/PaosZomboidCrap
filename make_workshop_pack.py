@@ -27,8 +27,11 @@ workshop_mod_root_dir = os.path.join(workshop_folder, modified_workspace)
 
 workshop_mod_contents_dir = os.path.join(workshop_mod_root_dir, "Contents")
 
-# Remove old data from contents
-shutil.rmtree(workshop_mod_contents_dir)
+# Try to remove old data from contents
+try:
+    shutil.rmtree(workshop_mod_contents_dir)
+except(FileNotFoundError):
+    pass
 
 workshop_mod_full_dir = os.path.join(workshop_mod_root_dir, "Contents", "mods", modified_workspace)
 
