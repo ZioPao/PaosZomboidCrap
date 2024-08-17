@@ -1,5 +1,7 @@
 import re
 import sys
+import os
+
 try:
     main_lua_path = sys.argv[1]
 except IndexError:
@@ -42,8 +44,8 @@ update_file(main_lua_path, main_lua_pattern, f'\\g<1>{new_version}\\g<3>')
 
 # Update mod.info
 mod_info_path = 'mod.info'
-mod_info_pattern = r'(version=)(\d+\.\d+(?:\.\d+)?)'
+mod_info_pattern = r'(modversion=)(\d+\.\d+(?:\.\d+)?)'
 
-update_file(mod_info_path, mod_info_pattern, f'\\1{new_version}')
+update_file(mod_info_path, mod_info_pattern, f'\\g<1>{new_version}')
 
 print(f"Version bumped to {new_version}")
