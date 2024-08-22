@@ -48,4 +48,7 @@ mod_info_pattern = r'(modversion=)(\d+\.\d+(?:\.\d+)?)'
 
 update_file(mod_info_path, mod_info_pattern, f'\\g<1>{new_version}')
 
-print(f"Version bumped to {new_version}")
+print(f"{new_version}")
+
+os.system(f'git tag -a v{new_version}')
+os.system('git push --tags')

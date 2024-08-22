@@ -1,0 +1,1 @@
+python bump_version.py media/lua/client/TOC/Main.lua
