@@ -8,11 +8,6 @@ except IndexError:
     print("You didn't pass the correct parameter.")
     exit()
 
-
-import re
-
-import re
-
 def bump_patch_version(version):
     parts = version.split('.')
     if len(parts) == 2:
@@ -50,5 +45,7 @@ update_file(mod_info_path, mod_info_pattern, f'\\g<1>{new_version}')
 
 print(f"{new_version}")
 
+os.system(f'git commit -a -m "Bump to mod version"')
 os.system(f'git tag -a v{new_version}')
 os.system('git push --tags')
+os.system('git push')
