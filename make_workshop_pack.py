@@ -75,7 +75,6 @@ def transfer_files_to_workshop_folder(dest):
 
 
 if version == '42':
-    mod_files_to_copy.append("mod.info")
     for folder in os.listdir(og_mod_path):
         if folder.startswith("42"):
             folder_path = os.path.join(og_mod_path, folder)
