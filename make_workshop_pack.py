@@ -78,8 +78,9 @@ if version == '42':
     for folder in os.listdir(og_mod_path):
         if folder.startswith("42"):
             folder_path = os.path.join(og_mod_path, folder)
-            shutil.copytree(folder_path, os.path.join(workshop_mod_main_path, folder), dirs_exist_ok=True)
-            transfer_files_to_workshop_folder(folder_path)
+            dest = os.path.join(workshop_mod_main_path, folder)
+            shutil.copytree(folder_path, dest, dirs_exist_ok=True)
+            transfer_files_to_workshop_folder(dest)
 elif version == '41':
     transfer_files_to_workshop_folder(workshop_mod_main_path)
 
