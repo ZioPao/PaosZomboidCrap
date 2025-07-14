@@ -3,101 +3,97 @@ import shutil
 import os
 
 try:
-    user = sys.argv[1]
-    workspace = sys.argv[2]      # ${workspaceFolderBasename}
-    test = sys.argv[3]          
+    version = sys.argv[1]
+    user = sys.argv[2]
+    workspace = sys.argv[3]      # ${workspaceFolderBasename}
+    test = sys.argv[4]          
 except IndexError:
     print("You didn't pass the correct parameter.")
     exit()
 
 
 
-zomboid_folder = "C:\\Users\\" + user + "\\Zomboid"
+zomboid_path = os.path.join("C:\\", "Users", user, "Zomboid")
+mods_path = os.path.join(zomboid_path, "mods")
+workshop_path = os.path.join(zomboid_path, "Workshop")
+workshop_mod_root_path = os.path.join(workshop_path, workspace)
 
-mods_folder = os.path.join(zomboid_folder, "mods")
-workshop_folder = os.path.join(zomboid_folder, "Workshop")
 
-workshop_mod_root_dir = os.path.join(workshop_folder, workspace)
-
-workshop_mod_contents_dir = os.path.join(workshop_mod_root_dir, "Contents")
-
-# Try to remove old data from contents
+# Clean old Workshop folder
 try:
-    shutil.rmtree(workshop_mod_contents_dir)
+    shutil.rmtree(workshop_mod_root_path)
 except(FileNotFoundError):
     pass
 
-workshop_mod_full_dir = os.path.join(workshop_mod_root_dir, "Contents", "mods", workspace)
+workshop_mod_contents_path = os.path.join(workshop_mod_root_path, "Contents")
+workshop_mod_main_path = os.path.join(workshop_mod_contents_path, "mods", workspace)
+os.makedirs(workshop_mod_main_path, exist_ok=True)
 
 
-os.makedirs(workshop_mod_full_dir, exist_ok=True)
+og_mod_path = os.path.join(mods_path, workspace)
 
-
-
-og_mod_folder = os.path.join(mods_folder, workspace)
-
-################# Various locations
-media_folder = os.path.join(og_mod_folder, "common", "media")
-shutil.copytree(media_folder, os.path.join(workshop_mod_full_dir, "common", "media"), dirs_exist_ok=True)
-shutil.copytree(media_folder, os.path.join(workshop_mod_full_dir, "media"), dirs_exist_ok=True)
-
-# Root files
-
+# Handle root files
 if test == 'test':
     root_files_to_copy = ["workshop_test.txt", "preview.png"]
 else:
     root_files_to_copy = ["workshop.txt", "preview.png"]
-
 for file in root_files_to_copy:
     try:
-        path = os.path.join(og_mod_folder, "workshop_files", file)
+        path = os.path.join(og_mod_path, "workshop_files", file)
 
         if file == 'workshop_test.txt':
-            shutil.copy(path, os.path.join(workshop_mod_root_dir, "workshop.txt"))
+            shutil.copy(path, os.path.join(workshop_mod_root_path, "workshop.txt"))
         else:
-            shutil.copy(path, workshop_mod_root_dir)
+            shutil.copy(path, workshop_mod_root_path)
     except Exception:
         print("Error copying " + file)
 
+# mod_files_to_copy = ["poster.png", "icon.png"]
+# if version == '41':
+#     mod_files_to_copy.append('mod.info')
+
+# for file in mod_files_to_copy:
+#     try:
+#         path = os.path.join(og_mod_path, file)
+#         shutil.copy(path, workshop_mod_main_path)
+#     except Exception:
+#         print("Error copying " + file)
 
 
-# Get all the versioned folders (pattern = 42.0, 42.1, 42.2, etc)
-versioned_folders = []
-for folder in os.listdir(og_mod_folder):
-    if folder.startswith("42"):
-        print("Found versioned folder")
-        print(folder)
-        versioned_folders.append(folder)
 
+ # Poster and icon are always the same and are in the root folder.
+mod_files_to_copy = ["poster.png", "icon.png"]     
+def transfer_files_to_workshop_folder(dest):
+    # Copy various miscellaneous files
 
-# Copy them in workshop_mod_full_dir
-
-mod_files_to_copy = ["poster.png", "icon.png"]      # Poster and icon are always the same and are in the root folder.
-for folder in versioned_folders:
-    folder_path = os.path.join(og_mod_folder, folder)
-    shutil.copytree(folder_path, os.path.join(workshop_mod_full_dir, folder), dirs_exist_ok=True)
-
-    # Copy poster and icon
     for file in mod_files_to_copy:
         try:
-            path = os.path.join(og_mod_folder, file)
-            shutil.copy(path, os.path.join(workshop_mod_full_dir, folder))
-        except Exception:
-            print("Error copying " + file)
-
-### B41 COMPAT
-b41_files_to_copy = ["poster.png", "icon.png"]
-for file in b41_files_to_copy:
-    file_path = os.path.join(og_mod_folder, file)
-    if os.path.exists(file_path):
-        shutil.copy(file_path, workshop_mod_full_dir)
+            path = os.path.join(og_mod_path, file)
+            shutil.copy(path, os.path.join(workshop_mod_main_path, dest))
+        except Exception as e:
+            print(e)
 
 
+if version == '42':
+    mod_files_to_copy.append("mod.info")
+    for folder in os.listdir(og_mod_path):
+        if folder.startswith("42"):
+            folder_path = os.path.join(og_mod_path, folder)
+            shutil.copytree(folder_path, os.path.join(workshop_mod_main_path, folder), dirs_exist_ok=True)
+            transfer_files_to_workshop_folder(folder_path)
+elif version == '41':
+    transfer_files_to_workshop_folder(workshop_mod_main_path)
 
-b41_mod_info_path = os.path.join(og_mod_folder, "mod_b41.info")
-shutil.copy(b41_mod_info_path, os.path.join(workshop_mod_full_dir, "mod.info"))
+    mod_41_info_path = os.path.join(og_mod_path, "mod_41.info")
+    shutil.copy(mod_41_info_path, os.path.join(workshop_mod_main_path, "mod.info"))
 
 
-# todo change mod.info with additional_text
+# Copy the main content
+og_mod_media_folder = os.path.join(og_mod_path, "common", "media")
 
-print("All done!")
+if version == '42':
+    workshop_dest = os.path.join(workshop_mod_main_path, "common", "media")
+elif version == '41':
+    workshop_dest = os.path.join(workshop_mod_main_path, "media")
+
+shutil.copytree(og_mod_media_folder, os.path.join(workshop_mod_main_path, workshop_dest), dirs_exist_ok=True)
